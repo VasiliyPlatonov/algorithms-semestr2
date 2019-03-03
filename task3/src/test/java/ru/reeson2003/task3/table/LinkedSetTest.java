@@ -5,24 +5,24 @@ import org.junit.Test;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 public class LinkedSetTest {
 
     @Test
     public void integerSetTest() {
-        LinkedSet<Integer> integers = LinkedSet.of(100, 200, 300, 400, 500);
-        print(integers);
+        LinkedSet<Integer> integers = LinkedSet.of(100, 200, 200, 300, 200,400, 500, 200);
+        assertThat(toString(integers), is("500,400,300,200,100"));
         integers.add(600);
-        print(integers);
+        assertThat(toString(integers), is("600,500,400,300,200,100"));
         integers.remove(300);
-        print(integers);
+        assertThat(toString(integers), is("600,500,400,200,100"));
     }
 
-    public void print(LinkedSet<?> set) {
-        String str = StreamSupport.stream(set.spliterator(), false)
+    public String toString(LinkedSet<?> set) {
+        return StreamSupport.stream(set.spliterator(), false)
                 .map(Object::toString)
                 .collect(Collectors.joining(","));
-        System.out.println(str);
     }
 }

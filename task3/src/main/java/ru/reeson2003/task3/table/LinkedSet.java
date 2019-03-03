@@ -28,7 +28,7 @@ public interface LinkedSet<T> extends Iterable<T> {
 
         LinkedSetImpl(T... elements) {
             for (int i = 0; i < elements.length; i++) {
-                head = new ElementImpl(elements[i], head);
+                add(elements[i]);
             }
         }
 
@@ -39,6 +39,12 @@ public interface LinkedSet<T> extends Iterable<T> {
 
         @Override
         public void add(T element) {
+            Iterator<T> iterator = iterator();
+            while (iterator.hasNext()) {
+                T next = iterator.next();
+                if (next.equals(element))
+                    return;
+            }
             head = new ElementImpl(element, head);
         }
 

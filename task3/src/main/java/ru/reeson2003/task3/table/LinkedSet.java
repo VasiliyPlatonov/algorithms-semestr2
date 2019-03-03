@@ -17,6 +17,8 @@ public interface LinkedSet<T> extends Iterable<T> {
 
     void remove(T element);
 
+    String print();
+
     interface Element<T> {
         T value();
 
@@ -63,6 +65,13 @@ public interface LinkedSet<T> extends Iterable<T> {
                     }
                 }
             }
+        }
+
+        @Override
+        public String print() {
+            return StreamSupport.stream(spliterator(), false)
+                    .map(Objects::toString)
+                    .collect(Collectors.joining(",", "[", "]"));
         }
 
         @Override

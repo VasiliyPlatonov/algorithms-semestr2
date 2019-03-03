@@ -39,6 +39,13 @@ public class SimpleHashTable<T> implements HashTable<T> {
     }
 
     @Override
+    public String print() {
+        return IntStream.range(0, data.length)
+                .mapToObj(n -> n + ": " + data[n])
+                .collect(Collectors.joining("\n"));
+    }
+
+    @Override
     public Iterator<T> iterator() {
         return new Iter();
     }

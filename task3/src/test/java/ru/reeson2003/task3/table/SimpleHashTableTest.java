@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 public class SimpleHashTableTest {
 
-    private static final int BUCKETS_COUNT = 16;
+    private static final int BUCKETS_COUNT = 32;
     private static final Function<Integer, Integer> HASH_FUNCTION = n -> 15 * n + 2;
 
     @Test
@@ -19,6 +19,6 @@ public class SimpleHashTableTest {
                  table.add(random.nextInt(100));
              }
         }
-        System.out.println(table);
+        System.out.println(table.print());
     }
 }

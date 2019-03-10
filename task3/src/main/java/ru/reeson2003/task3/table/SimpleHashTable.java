@@ -39,10 +39,65 @@ public class SimpleHashTable<T> implements HashTable<T> {
     }
 
     @Override
+    public boolean contains(T value) {
+        Integer bucket = hashFunction.apply(value);
+        for (T next : data[bucket]) {
+            if (next.equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public String print() {
         return IntStream.range(0, data.length)
-                .mapToObj(n -> n + ": " + data[n])
+                .mapToObj(n -> n + ": " + data[n].print())
                 .collect(Collectors.joining("\n"));
+    }
+
+    @Override
+    public void unite(HashTable<T> another) {
+        for (T t : another) {
+            if (!contains(t)) {
+                add(t);
+            }
+        }
+    }
+
+    @Override
+    public void intersect(HashTable<T> another) {
+        Iterator<T> iterator = iterator();
+        while (iterator.hasNext()) {
+            T next = iterator.next();
+            if (!another.contains(next)) {
+                remove(next);
+            }
+        }
+    }
+
+    @Override
+    public void differ(HashTable<T> another) {
+        Iterator<T> iterator = another.iterator();
+        while (iterator.hasNext()) {
+            T next = iterator.next();
+            if (contains(next)) {
+                remove(next);
+            }
+        }
+    }
+
+    @Override
+    public void symDiffer(HashTable<T> another) {
+        Iterator<T> iterator = another.iterator();
+        while (iterator.hasNext()) {
+            T next = iterator.next();
+            if (contains(next)) {
+                remove(next);
+            } else {
+                add(next);
+            }
+        }
     }
 
     @Override
@@ -67,23 +122,19 @@ public class SimpleHashTable<T> implements HashTable<T> {
             next = getNextFromBucket(0);
         }
 
-        private Element<T> getNext() {
-            if (next == null) {
-                return next;
-            }
+        private void setNext() {
             Element<T> current = next;
-            if (current.next() != null) {
-                next = current.next();
-                return current;
+            Element<T> nextInList = current.next();
+            if (nextInList != null) {
+                this.next = nextInList;
             } else {
-                next = getNextFromBucket(bucketNumber + 1);
-                return current;
+                this.next = getNextFromBucket(bucketNumber + 1);
             }
         }
 
         private Element<T> getNextFromBucket(int bucketNumber) {
             for (int i = bucketNumber; i < bucketsCount; i++) {
-                Element<T> head = data[bucketNumber].head();
+                Element<T> head = data[i].head();
                 if (head != null) {
                     this.bucketNumber = i;
                     return head;
@@ -99,7 +150,9 @@ public class SimpleHashTable<T> implements HashTable<T> {
 
         @Override
         public T next() {
-            return next.value();
+            T result = next.value();
+            setNext();
+            return result;
         }
     }
 }

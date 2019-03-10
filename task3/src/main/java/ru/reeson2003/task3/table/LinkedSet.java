@@ -53,15 +53,19 @@ public interface LinkedSet<T> extends Iterable<T> {
         @Override
         public void remove(T element) {
             if (head != null) {
-                ElementImpl prev = head;
-                ElementImpl current = head.next;
-                while (current != null) {
-                    if (element.equals(current.value)) {
-                        prev.next = current.next;
-                        break;
-                    } else {
-                        prev = current;
-                        current = current.next;
+                if (element.equals(head.value)) {
+                    head = head.next;
+                } else {
+                    ElementImpl prev = head;
+                    ElementImpl current = head.next;
+                    while (current != null) {
+                        if (element.equals(current.value)) {
+                            prev.next = current.next;
+                            break;
+                        } else {
+                            prev = current;
+                            current = current.next;
+                        }
                     }
                 }
             }

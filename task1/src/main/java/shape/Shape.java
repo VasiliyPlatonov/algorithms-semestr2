@@ -70,8 +70,19 @@ public abstract class Shape {
     public void down(Shape shape) {
         Point n = shape.south();
         Point s = this.north();
-
         this.move(n.getX() - s.getX(), n.getY() - s.getY() - 1);
+    }
+
+    public void putToWest(Shape shape) {
+        Point w = shape.east();
+        Point e = this.east();
+        this.move(w.getX() - e.getX(), w.getY() - e.getY() - 1);
+    }
+
+    public void putToEast(Shape shape) {
+        Point w = shape.west();
+        Point e = this.east();
+        this.move(w.getX() - e.getX(), w.getY() - e.getY() - 1);
     }
 }
 

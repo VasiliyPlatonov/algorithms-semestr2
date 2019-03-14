@@ -19,8 +19,8 @@ public class HalfCircle extends Rectangle implements Reflectable {
         super(sw, ne);
     }
 
-    public HalfCircle(Point a, Point b, boolean reflected) {
-        super(a, b);
+    public HalfCircle(Point sw, Point ne, boolean reflected) {
+        super(sw, ne);
         this.reflected = reflected;
     }
 

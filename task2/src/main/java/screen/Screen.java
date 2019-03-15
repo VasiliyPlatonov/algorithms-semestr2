@@ -4,8 +4,8 @@ import screen.exception.OutOfScreenException;
 
 abstract public class Screen {
     // size of screen
-    protected static final int X_MAX = 100;
-    protected static final int Y_MAX = 50;
+    public static final int X_MAX = 100;
+    public static final int Y_MAX = 50;
 
     /**
      * Display a point

@@ -4,6 +4,7 @@ import screen.CharMatrixScreen;
 import screen.Point;
 import screen.Screen;
 import screen.exception.ExceptionList;
+import screen.exception.IllegalInitPointException;
 import screen.exception.OutOfScreenException;
 
 public abstract class Shape {
@@ -21,6 +22,33 @@ public abstract class Shape {
     protected Shape() {
         next = beginning;
         beginning = this;
+    }
+
+    protected Shape(Point sw, Point ne) {
+        try {
+            // check the points
+            checkInitPoint(sw, ne);
+            // if the points are correctly - add new shape to the shape list
+            next = beginning;
+            beginning = this;
+        } catch (IllegalInitPointException ex) {
+            // if the points are NOT correctly - add new exceptions to the exception list
+            ExceptionList.exceptions.add(ex.getMessage());
+        }
+    }
+
+    private void checkInitPoint(Point sw, Point ne) throws IllegalInitPointException {
+        String commonMsg = String.format(
+                "Occurred an exception IllegalInitPointException. The shape [ %s ] cannot be drawn.\n", this.getClass().getSimpleName());
+
+        if (sw.getX() < 0 || sw.getX() > Screen.X_MAX)
+            throw new IllegalInitPointException(commonMsg + "The point sw was set incorrectly. sw.x should be more than 0 and less than " + Screen.X_MAX);
+        if (sw.getY() < 0 || sw.getY() > Screen.Y_MAX)
+            throw new IllegalInitPointException(commonMsg +"The point sw was set incorrectly. sw.y should be more than 0 and less than " + Screen.Y_MAX);
+        if (ne.getX() < 0 || ne.getX() > Screen.X_MAX)
+            throw new IllegalInitPointException(commonMsg +"The point ne was set incorrectly. ne.x should be more than 0 and less than " + Screen.X_MAX);
+        if (ne.getY() < 0 || ne.getY() > Screen.Y_MAX)
+            throw new IllegalInitPointException(commonMsg +"The point ne was set incorrectly. ne.y should be more than 0 and less than " + Screen.Y_MAX);
     }
 
     abstract Point north();

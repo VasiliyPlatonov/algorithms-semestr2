@@ -20,7 +20,7 @@ public class Rectangle extends Shape implements Rotatable {
 
 
     public Rectangle(Point sw, Point ne) {
-        super();
+        super(sw, ne);
         this.sw = sw;
         this.ne = ne;
     }

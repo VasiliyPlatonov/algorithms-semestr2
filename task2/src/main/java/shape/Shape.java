@@ -3,6 +3,8 @@ package shape;
 import screen.CharMatrixScreen;
 import screen.Point;
 import screen.Screen;
+import screen.exception.ExceptionList;
+import screen.exception.OutOfScreenException;
 
 public abstract class Shape {
 
@@ -37,7 +39,7 @@ public abstract class Shape {
 
     abstract Point sWest();
 
-    abstract void draw();
+    abstract void draw() throws OutOfScreenException;
 
     abstract void move(int x, int y);
 
@@ -49,10 +51,19 @@ public abstract class Shape {
     public static void refresh() {
         screen.clear();
         for (Shape p = beginning; p != null; p = p.next) {
-            p.draw();
+            try {
+                p.draw();
+            } catch (OutOfScreenException e) {
+                // todo: add log (logback or something like that) and write in files
+                ExceptionList.exceptions.add(String.format(
+                        "Occurred an exception %s. The shape [ %s ] cannot be drawn",
+                        e, p.getClass().getSimpleName()));
+            }
         }
         screen.refresh();
-
+        // Display the exceptions if they are
+        if (!ExceptionList.exceptions.isEmpty())
+            ExceptionList.showAll();
     }
 
     /**

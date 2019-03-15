@@ -1,6 +1,7 @@
 package shape;
 
 import screen.Point;
+import screen.exception.OutOfScreenException;
 
 /**
  * <pre>
@@ -65,7 +66,7 @@ public class Rectangle extends Shape implements Rotatable {
     }
 
     @Override
-    public void draw() {
+    public void draw() throws OutOfScreenException {
         screen.putLine(nWest(), ne);
         screen.putLine(ne, sEast());
         screen.putLine(sEast(), sw);

@@ -1,6 +1,7 @@
 package shape;
 
 import screen.Point;
+import screen.exception.OutOfScreenException;
 
 public class Line extends Shape {
     private Point w;
@@ -80,7 +81,7 @@ public class Line extends Shape {
     }
 
     @Override
-    public void draw() {
+    public void draw () throws OutOfScreenException {
         screen.putLine(w, e);
     }
 
@@ -90,7 +91,6 @@ public class Line extends Shape {
         w.setY(w.getY() + y);
         e.setX(e.getX() + x);
         e.setY(e.getY() + y);
-
     }
 
     @Override

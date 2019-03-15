@@ -1,6 +1,7 @@
 package shape;
 
 import screen.Point;
+import screen.exception.OutOfScreenException;
 
 public class HalfCircle extends Rectangle implements Reflectable {
 
@@ -30,7 +31,7 @@ public class HalfCircle extends Rectangle implements Reflectable {
      * @see "https://en.wikipedia.org/wiki/Midpoint_circle_algorithm"
      */
     @Override
-    public void draw() {
+    public void draw() throws OutOfScreenException {
         int x0 = (sw.getX() + ne.getX()) / 2;
         int y0 = reflected ? sw.getY() : ne.getY();
         int radius = (ne.getX() - sw.getX()) / 2;

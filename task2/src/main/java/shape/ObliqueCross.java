@@ -1,6 +1,7 @@
 package shape;
 
 import screen.Point;
+import screen.exception.OutOfScreenException;
 
 public class ObliqueCross extends Rectangle {
 
@@ -10,7 +11,7 @@ public class ObliqueCross extends Rectangle {
 
 
     @Override
-    public void draw() {
+    public void draw() throws OutOfScreenException {
         screen.putLine(sw, ne);
         screen.putLine(sEast(), nWest());
     }

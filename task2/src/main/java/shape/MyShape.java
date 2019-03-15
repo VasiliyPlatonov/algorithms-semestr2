@@ -1,6 +1,7 @@
 package shape;
 
 import screen.Point;
+import screen.exception.OutOfScreenException;
 
 public class MyShape extends Rectangle {
 
@@ -40,7 +41,7 @@ public class MyShape extends Rectangle {
     }
 
     @Override
-    public void draw() {
+    public void draw() throws OutOfScreenException {
         super.draw();
         int a = (sWest().getX() + nEast().getX()) / 2;
         int b = (sWest().getY() + nEast().getY()) / 2;

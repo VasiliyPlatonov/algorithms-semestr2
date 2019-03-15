@@ -1,4 +1,5 @@
 import screen.Point;
+import screen.exception.ExceptionList;
 import shape.*;
 
 public class Main {
@@ -13,7 +14,6 @@ public class Main {
         RhombWithObliqueCross lEar = new RhombWithObliqueCross(new Point(90, 25), new Point(80, 32));
         RhombWithObliqueCross rEar = new RhombWithObliqueCross(new Point(20, 35), new Point(30, 42));
         Shape.refresh();
-
 
         System.out.println("\n\t\t======== Prepared ========");
         hat.rotateRight();
@@ -30,6 +30,9 @@ public class Main {
         lEar.putToWest(face);
         rEar.putToEast(face);
         tie.down(face);
+
         Shape.refresh();
+
+
     }
 }

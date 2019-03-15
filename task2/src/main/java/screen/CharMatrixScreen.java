@@ -1,5 +1,7 @@
 package screen;
 
+import screen.exception.OutOfScreenException;
+
 public class CharMatrixScreen extends Screen {
     private char[][] screenArea = new char[Y_MAX][X_MAX];
 
@@ -8,9 +10,10 @@ public class CharMatrixScreen extends Screen {
     }
 
     @Override
-    public void putPoint(int x, int y) {
+    public void putPoint(int x, int y) throws OutOfScreenException {
         if (isItScreen(x, y))
             screenArea[y][x] = Color.BLACK.getSign();
+        else throw new OutOfScreenException();
     }
 
     /**
@@ -19,7 +22,7 @@ public class CharMatrixScreen extends Screen {
      * @see "https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm"
      */
     @Override
-    public void putLine(int x0, int y0, int x1, int y1) {
+    public void putLine(int x0, int y0, int x1, int y1) throws OutOfScreenException {
         int dx = 1;
         int a = x1 - x0;
         if (a < 0) {

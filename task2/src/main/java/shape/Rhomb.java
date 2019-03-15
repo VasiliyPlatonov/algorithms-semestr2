@@ -1,6 +1,7 @@
 package shape;
 
 import screen.Point;
+import screen.exception.OutOfScreenException;
 
 public class Rhomb extends Rectangle {
 
@@ -9,7 +10,7 @@ public class Rhomb extends Rectangle {
     }
 
     @Override
-    public void draw() {
+    public void draw() throws OutOfScreenException {
         screen.putLine(south(), west());
         screen.putLine(west(), north());
         screen.putLine(north(), east());

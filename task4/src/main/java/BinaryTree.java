@@ -2,7 +2,7 @@ public class BinaryTree {
 
     private Node root;
 
-    public class Node {
+    public static class Node {
         Node left;
         Node right;
         Integer value;
@@ -169,9 +169,9 @@ public class BinaryTree {
     /**
      * Удаление узла из дерева
      *
-     * @param root корень дерева
+     * @param root  корень дерева
      * @param value значение удаляемого узла
-     * */
+     */
     public boolean remove(Node root, int value) {
         Node nodeToDelete = search(root, value);
         if (!nodeExists(nodeToDelete)) return false;
@@ -186,4 +186,8 @@ public class BinaryTree {
         }
         return true;
     }
+
+
+
+
 }

@@ -1,8 +1,4 @@
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
-
-import static org.apache.commons.collections4.CollectionUtils.*;
+import java.util.Random;
 
 public class Domain {
 
@@ -14,47 +10,34 @@ public class Domain {
     }
 
     public void process() {
-        Set<CompoundKey<Integer>> a = generate();
-        Set<CompoundKey<Integer>> b = generate();
-        Set<CompoundKey<Integer>> c = generate();
-        Set<CompoundKey<Integer>> d = generate();
-        Set<CompoundKey<Integer>> e = generate();
+        MyContainer<Integer> a = generate();
+        MyContainer<Integer> b = generate();
+        MyContainer<Integer> c = generate();
+        MyContainer<Integer> d = generate();
+        MyContainer<Integer> e = generate();
         System.out.println("a = " + a);
         System.out.println("b = " + b);
         System.out.println("c = " + c);
         System.out.println("d = " + d);
         System.out.println("e = " + e);
-        Collection<CompoundKey<Integer>> subtraction = subtract(d, e);
-        System.out.println("subtraction = " + subtraction);
-        Collection<CompoundKey<Integer>> intersection = intersection(c, subtraction);
-        System.out.println("intersection = " + intersection);
-        Collection<CompoundKey<Integer>> union = union(a, b);
-        System.out.println("union = " + union);
-        Collection<CompoundKey<Integer>> disjunction = disjunction(subtraction, union);
-        System.out.println("disjunction = " + disjunction);
+        c.intersect(d);
+        System.out.println("intersect = " + c);
+        c.differ(e);
+        System.out.println("differ = " + c);
+        a.unite(b);
+        System.out.println("union = " + a);
+        a.symDiffer(c);
+        System.out.println("symDiffer = " + a);
     }
 
-    public SortedSet<CompoundKey<Integer>> generate() {
+    MyContainer<Integer> generate() {
         Random random = new Random();
-        AtomicInteger counter = new AtomicInteger();
-        return IntStream.range(0, NUMBER)
-                .map(k -> random.nextInt(BOUND))
-                .boxed()
-                .reduce(new TreeSet<>(), (set, next) -> {
-                    CompoundKey<Integer> key = new CompoundKey<Integer>(next) {
-                        @Override
-                        public boolean equals(Object o) {
-                            return getKey().equals(((CompoundKey<Integer>) o).getKey());
-                        }
-
-                        @Override
-                        public int hashCode() {
-                            return getKey();
-                        }
-                    };
-                    key.setIndex(counter.getAndIncrement());
-                    set.add(key);
-                    return set;
-                }, (a, b) -> b);
+        MyContainer<Integer> data = new MyContainer<>();
+        for (int i = 0; i < NUMBER; i++) {
+            for (int j = 0; j < 32; j++) {
+                data.add(random.nextInt(BOUND));
+            }
+        }
+        return data;
     }
 }

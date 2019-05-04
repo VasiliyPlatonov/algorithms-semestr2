@@ -1,4 +1,4 @@
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 /**
  * <strong>Красно-чёрное дерево</strong> - бинарное поисковое дерево, у которого каждому узлу сопоставлен
@@ -15,11 +15,11 @@ import java.util.function.Function;
  */
 public class RBTree<Key extends Comparable<Key>, Value> {
 
-    private int size;
-    private static final boolean RED = false;
-    private static final boolean BLACK = true;
+    protected int size;
+    protected static final boolean RED = false;
+    protected static final boolean BLACK = true;
 
-    private Node<Key, Value> root;
+    protected Node<Key, Value> root;
 
     public class Node<Key, Value> implements TreePrinter.PrintableNode {
         private Key key;
@@ -428,13 +428,20 @@ public class RBTree<Key extends Comparable<Key>, Value> {
         symDiffer(node.getRight());
     }
 
-    public void postOrderTraversal(Node<Key, Value> node,
-                                   Function<Node<Key, Value>, Object> func) {
+    protected void postOrderTraversal(Node<Key, Value> node,
+                                   Consumer<Node<Key, Value>> handler) {
         if (node == null) return;
-        postOrderTraversal(node.getLeft(), func);
-        postOrderTraversal(node.getRight(), func);
-        func.apply(node);
+        postOrderTraversal(node.getLeft(), handler);
+        postOrderTraversal(node.getRight(), handler);
+        handler.accept(node);
+    }
 
+    protected void preOrderTraversal(Node<Key, Value> node,
+                                     Consumer<Node<Key, Value>> handler) {
+        if (node == null) return;
+        handler.accept(node);
+        preOrderTraversal(node.getLeft(), handler);
+        preOrderTraversal(node.getRight(), handler);
     }
 
 }

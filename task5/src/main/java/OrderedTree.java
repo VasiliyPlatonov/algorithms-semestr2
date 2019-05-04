@@ -4,52 +4,59 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class OrderedTree<Key extends Comparable<Key>, Value>
-        extends RBTree<CompoundKey<Key>, Value>
-        implements Iterable<OrderedTree.Pair<CompoundKey<Key>, Value>> {
+        implements Iterable<RBTree.Pair<CompoundKey<Key>, Value>> {
+    private RBTree<CompoundKey<Key>, Value> origin;
 
-    public void putOne(Key key, Value value) {
+    public OrderedTree(RBTree<CompoundKey<Key>, Value> origin) {
+        this.origin = origin;
+    }
+
+
+    public void put(Key key, Value value) {
         CompoundKey<Key> compoundKey = new CompoundKey<>(key);
-        compoundKey.setNumber(size());
-        put(compoundKey, value);
+        compoundKey.setIndex(origin.size());
+        origin.put(compoundKey, value);
     }
 
     public void delete(int index) {
-        Node node = getNode(index);
-        int number = node.key.getNumber();
-        preOrderTraversal(root, n -> {
-            int num = n.key.getNumber();
+        RBTree.Pair<CompoundKey<Key>, Value> pair = getNode(index);
+        int number = pair.getKey().getIndex();
+        origin.walkThrough((key, value) -> {
+            int num = key.getIndex();
             if (num > number)
-                n.key.setNumber(num - 1);
+                key.setIndex(num - 1);
         });
-        delete(node.key);
+        origin.delete(pair.getKey());
     }
 
-    protected Node getNode(int index) {
-        if (index > size())
+    protected RBTree.Pair<CompoundKey<Key>, Value> getNode(int index) {
+        if (index > origin.size())
             return null;
-        AtomicReference<Node> result = new AtomicReference<>();
-        preOrderTraversal(root, node -> {
-            if (node.key.getNumber() == index)
-                result.set(node);
+        AtomicReference<RBTree.Pair<CompoundKey<Key>, Value>> result = new AtomicReference<>();
+        origin.walkThrough((key, value) -> {
+            if (key.getIndex() == index)
+                result.set(new RBTree.Pair<>(key, value));
         });
         return result.get();
     }
 
-    public Pair<CompoundKey<Key>, Value> get(int index) {
+    public RBTree.Pair<CompoundKey<Key>, Value> get(int index) {
         return Optional.ofNullable(getNode(index))
-                .map(node -> new Pair<>(node.key, node.val))
                 .orElse(null);
     }
 
+    public int size() {
+        return origin.size();
+    }
+
     @Override
-    public Iterator<Pair<CompoundKey<Key>, Value>> iterator() {
-        return new Iterator<Pair<CompoundKey<Key>, Value>>() {
-            private int remains = size();
+    public Iterator<RBTree.Pair<CompoundKey<Key>, Value>> iterator() {
+        return new Iterator<RBTree.Pair<CompoundKey<Key>, Value>>() {
+            private int remains = origin.size();
 
             @Override
             public boolean hasNext() {
@@ -57,24 +64,16 @@ public class OrderedTree<Key extends Comparable<Key>, Value>
             }
 
             @Override
-            public Pair<CompoundKey<Key>, Value> next() {
+            public RBTree.Pair<CompoundKey<Key>, Value> next() {
                 if (!hasNext())
                     throw new NoSuchElementException();
-                return get(size() - remains--);
+                return get(origin.size() - remains--);
             }
         };
     }
 
-    protected void preOrderTraversal(Node n, Consumer<Node> handler) {
-        handler.accept(n);
-        if (n.left != null)
-            preOrderTraversal(n.left, handler);
-        if (n.right != null)
-            preOrderTraversal(n.right, handler);
-    }
-
     public void erase(int from, int to) {
-        for (int i = 0; i < to - from; i++) {
+        for (int i = 0; i <= to - from; i++) {
             delete(from);
         }
     }
@@ -82,9 +81,9 @@ public class OrderedTree<Key extends Comparable<Key>, Value>
     public void exclude(OrderedTree<Key, Value> another) {
         another.forEach(pair -> {
             AtomicInteger toDelete = new AtomicInteger(-1);
-            preOrderTraversal(root, node -> {
-                if (pair.key.getKey().equals(node.key.getKey()))
-                    toDelete.set(node.key.getNumber());
+            origin.walkThrough((key, value) -> {
+                if (pair.getKey().getKey().equals(key.getKey()))
+                    toDelete.set(key.getIndex());
             });
             int index = toDelete.get();
             if (index >= 0) {
@@ -96,25 +95,18 @@ public class OrderedTree<Key extends Comparable<Key>, Value>
     public void multiple(int times) {
         if (times <= 1)
             return;
-        List<Pair<Key, Value>> pairs = StreamSupport.stream(spliterator(), false)
-                .map(pair -> new Pair<>(pair.key.getKey(), pair.value))
+        List<RBTree.Pair<Key, Value>> pairs = StreamSupport.stream(spliterator(), false)
+                .map(pair -> new RBTree.Pair<>(pair.getKey().getKey(), pair.getValue()))
                 .collect(Collectors.toList());
         for (int i = 0; i < times - 1; i++) {
-            pairs.forEach(pair -> putOne(pair.key, pair.value));
+            pairs.forEach(pair -> put(pair.getKey(), pair.getValue()));
         }
     }
 
-    public void print() {
-        preOrderTraversal(root, System.out::println);
+    public void printDFS() {
+        origin.walkThrough((key, value) -> {
+            System.out.println("key=" + key + ", value=" + value);
+        });
     }
 
-    public static final class Pair<K, V> {
-        public final K key;
-        public final V value;
-
-        private Pair(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
-    }
 }

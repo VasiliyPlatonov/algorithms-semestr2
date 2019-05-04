@@ -1,72 +1,127 @@
+import org.junit.After;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
+
+import java.util.Comparator;
+import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.assertEquals;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class OrderedTreeTest {
 
-    @Test
-    public void putOne() {
-        OrderedTree<Integer, Integer> tree = new OrderedTree<>();
-        tree.putOne(1, 1);
-        tree.putOne(1, 2);
-        tree.putOne(2, 2);
-        tree.putOne(2, 3);
-        tree.putOne(3, 3);
-        assertEquals(5, tree.size());
-        tree.print();
+    @Before
+    @After
+    public void separate() {
+        System.out.println("================================");
     }
 
     @Test
-    public void delete() {
-        OrderedTree<Integer, Integer> tree = new OrderedTree<>();
-        tree.putOne(1, 1);
-        tree.putOne(1, 2);
-        tree.putOne(2, 2);
-        tree.putOne(2, 3);
-        tree.putOne(3, 3);
+    public void _1put() {
+        System.out.println("Put duplicate keys test:");
+        separate();
+        OrderedTree<Integer, Integer> tree = new OrderedTree<>(new RBTreeImpl<>());
+        tree.put(1, 1);
+        tree.put(1, 2);
+        tree.put(2, 2);
+        tree.put(2, 3);
+        tree.put(3, 3);
+        assertEquals(5, tree.size());
+        printSorted(tree);
+    }
+
+    @Test
+    public void _2delete() {
+        System.out.println("Delete by index test:");
+        separate();
+        OrderedTree<Integer, Integer> tree = new OrderedTree<>(new RBTreeImpl<>());
+        tree.put(1, 1);
+        tree.put(1, 2);
+        tree.put(2, 2);
+        tree.put(2, 3);
+        tree.put(3, 3);
+        System.out.println("Before:");
+        printSorted(tree);
+        separate();
+        System.out.println("Deleting element index [3]");
+        separate();
         tree.delete(3);
         assertEquals(4, tree.size());
-        tree.print();
+        System.out.println("After:");
+        printSorted(tree);
     }
 
     @Test
-    public void erase() {
-        OrderedTree<Integer, Integer> tree = new OrderedTree<>();
-        tree.putOne(1, 1);
-        tree.putOne(1, 2);
-        tree.putOne(2, 2);
-        tree.putOne(2, 3);
-        tree.putOne(3, 3);
+    public void _3erase() {
+        System.out.println("Erase test:");
+        separate();
+        OrderedTree<Integer, Integer> tree = new OrderedTree<>(new RBTreeImpl<>());
+        tree.put(1, 1);
+        tree.put(2, 2);
+        tree.put(3, 3);
+        tree.put(4, 4);
+        tree.put(5, 5);
+        System.out.println("Before:");
+        printSorted(tree);
+        separate();
+        System.out.println("Erasing elements between [1],[3]");
+        separate();
         tree.erase(1, 3);
         assertEquals(2, tree.size());
-        tree.print();
+        System.out.println("After:");
+        printSorted(tree);
     }
 
     @Test
-    public void exclude() {
-        OrderedTree<Integer, Integer> tree = new OrderedTree<>();
-        tree.putOne(1, 1);
-        tree.putOne(1, 2);
-        tree.putOne(2, 2);
-        tree.putOne(2, 3);
-        tree.putOne(3, 3);
-        OrderedTree<Integer, Integer> subtree = new OrderedTree<>();
-        subtree.putOne(2, 2);
-        subtree.putOne(2, 3);
-        subtree.putOne(3, 3);
+    public void _4exclude() {
+        System.out.println("Exclude test");
+        separate();
+        OrderedTree<Integer, Integer> tree = new OrderedTree<>(new RBTreeImpl<>());
+        tree.put(1, 1);
+        tree.put(1, 2);
+        tree.put(2, 2);
+        tree.put(2, 3);
+        tree.put(3, 3);
+        System.out.println("Before:");
+        printSorted(tree);
+        OrderedTree<Integer, Integer> subtree = new OrderedTree<>(new RBTreeImpl<>());
+        subtree.put(2, 2);
+        subtree.put(2, 3);
+        subtree.put(3, 3);
+        separate();
+        System.out.println("Excluding sub tree:");
+        separate();
+        printSorted(subtree);
         tree.exclude(subtree);
         assertEquals(2, tree.size());
-        tree.print();
+        System.out.println("After:");
+        printSorted(tree);
     }
 
     @Test
-    public void multiple() {
-        OrderedTree<Integer, Integer> tree = new OrderedTree<>();
-        tree.putOne(1, 1);
-        tree.putOne(2, 2);
-        tree.putOne(3, 3);
+    public void _4multiple() {
+        System.out.println("Multiple test:");
+        separate();
+        OrderedTree<Integer, Integer> tree = new OrderedTree<>(new RBTreeImpl<>());
+        tree.put(1, 1);
+        tree.put(2, 2);
+        tree.put(3, 3);
+        System.out.println("Before:");
+        printSorted(tree);
+        separate();
+        System.out.println("Multiplying [3] times");
+        separate();
         tree.multiple(3);
         assertEquals(9, tree.size());
-        tree.print();
+        System.out.println("After:");
+        printSorted(tree);
+    }
+
+    private void printSorted(OrderedTree<Integer, Integer> tree) {
+        StreamSupport.stream(tree.spliterator(), false)
+                .sorted(Comparator.comparingInt(key -> key.getKey().getIndex()))
+                .forEach(System.out::println);
     }
 }

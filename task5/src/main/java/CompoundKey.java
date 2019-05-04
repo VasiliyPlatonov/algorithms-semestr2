@@ -2,7 +2,7 @@ import java.util.Objects;
 
 class CompoundKey<T extends Comparable<T>> implements Comparable<CompoundKey<T>> {
     private final T key;
-    private int number;
+    private int index;
 
     public CompoundKey(T key) {
         this.key = key;
@@ -12,7 +12,7 @@ class CompoundKey<T extends Comparable<T>> implements Comparable<CompoundKey<T>>
     public int compareTo(CompoundKey<T> compoundKey) {
         int i = key.compareTo(compoundKey.key);
         if (i == 0) {
-            return Integer.compare(number, compoundKey.number);
+            return Integer.compare(index, compoundKey.index);
         }
         return i;
     }
@@ -21,12 +21,12 @@ class CompoundKey<T extends Comparable<T>> implements Comparable<CompoundKey<T>>
         return key;
     }
 
-    public int getNumber() {
-        return number;
+    public int getIndex() {
+        return index;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     @Override
@@ -34,20 +34,20 @@ class CompoundKey<T extends Comparable<T>> implements Comparable<CompoundKey<T>>
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CompoundKey<?> that = (CompoundKey<?>) o;
-        return number == that.number &&
+        return index == that.index &&
                 Objects.equals(key, that.key);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(key, number);
+        return Objects.hash(key, index);
     }
 
     @Override
     public String toString() {
         return "{" +
                 "key=" + key +
-                ", number=" + number +
+                ", index=" + index +
                 '}';
     }
 }

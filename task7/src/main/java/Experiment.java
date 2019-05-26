@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -56,7 +57,7 @@ public class Experiment implements Runnable {
             HSSFRow row = sheet.getRow(i + 3);
             String[] numbers = list.get(i).split(" ");
             for (int j = 0; j < numbers.length; j++) {
-                row.getCell(52 + j).setCellValue(numbers[j]);
+                row.getCell(52 + j).setCellValue(Double.parseDouble(numbers[j]));
             }
         }
     }
@@ -70,8 +71,8 @@ public class Experiment implements Runnable {
         for (int i = 0; i < total; i++) {
             HSSFRow nextRow = sheet.getRow(i + 3);
             String[] entry = list.get(i + 1).split(" ");
-            nextRow.getCell(0).setCellValue(entry[0]);
-            nextRow.getCell(1).setCellValue(entry[1]);
+            nextRow.getCell(0).setCellValue(Double.parseDouble(entry[0]));
+            nextRow.getCell(1).setCellValue(Double.parseDouble(entry[1]));
         }
     }
 
@@ -81,19 +82,23 @@ public class Experiment implements Runnable {
 
     private void processResults() {
         try {
-            Process process = Runtime.getRuntime().exec(RG_32_17_EXE);
-            Files.copy(Paths.get(Experiment.OUT_FILE), process.getOutputStream());
+            Runtime.getRuntime().exec(RG_32_17_EXE);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void generateData() {
+        // run several times to jit
+        for (int i = 0; i < 100; i++) {
+            process(300);
+        }
+
         List<String> results = IntStream.range(5, 206)
                 .filter(n -> n % 5 == 0)
                 .flatMap(n -> IntStream.range(0, 3)
                         .map(i -> n))
-                .mapToObj(n -> n + " " + process(n))
+                .mapToObj(n -> n + " " + process(n) * 0.000001D)
                 .collect(Collectors.toList());
         try (PrintWriter writer = new PrintWriter(Experiment.IN_FILE)) {
             writer.println(results.size());
@@ -104,8 +109,12 @@ public class Experiment implements Runnable {
     }
 
     private long process(int setPower) {
-        long before = System.nanoTime();
-        new Domain(setPower, BOUND).process(STUB);
-        return System.nanoTime() - before;
+        return IntStream.range(0, 100)
+                .mapToLong(n -> {
+                    long before = System.nanoTime();
+                    new Domain(setPower, BOUND, LinkedList::new).process(STUB);
+                    return System.nanoTime() - before;
+                })
+                .sum() / 100;
     }
 }

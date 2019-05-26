@@ -1,19 +1,24 @@
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Random;
+import java.util.function.UnaryOperator;
 
 public class Domain {
 
     private final int number;
     private final int bound;
+    private final UnaryOperator<Collection<Integer>> collectionFactory;
 
-    public Domain(int number, int bound) {
+    public Domain(int number, int bound, UnaryOperator<Collection<Integer>> collectionFactory) {
         this.number = number;
         this.bound = bound;
+        this.collectionFactory = collectionFactory;
     }
 
     public static void main(String[] args) {
-        new Domain(100, 1000).process(System.out);
+        new Domain(100, 1000, LinkedList::new).process(System.out);
     }
 
     public void process(OutputStream out) {
@@ -40,7 +45,7 @@ public class Domain {
 
     MyContainer<Integer> generate() {
         Random random = new Random();
-        MyContainer<Integer> data = new MyContainer<>();
+        MyContainer<Integer> data = new MyContainer<>(collectionFactory);
         for (int i = 0; i < number; i++) {
             for (int j = 0; j < 32; j++) {
                 data.add(random.nextInt(bound));

@@ -11,8 +11,8 @@ import java.util.function.Function;
 public class Domain {
 
     private static final int RANGE = 100;
-    private static final int BUCKETS_COUNT = 32;
-    private static final Function<Integer, Integer> HASH_FUNCTION = n -> (31 * n + 3) % BUCKETS_COUNT;
+
+    private static final Function<Integer, Function<Integer, Integer>> hashFunction = buckets -> n -> ((buckets - 1) * n + 2) % buckets;
 
     private final Random random = new Random(System.nanoTime());
 
@@ -28,9 +28,9 @@ public class Domain {
         return a;
     }
 
-    public HashTable<Integer> generate() {
-        HashTable<Integer> table = new SimpleHashTable<>(BUCKETS_COUNT, HASH_FUNCTION);
-        for (int i = 0; i < BUCKETS_COUNT; i++) {
+    public HashTable<Integer> generate(int bucketsCount) {
+        HashTable<Integer> table = new SimpleHashTable<>(bucketsCount, hashFunction.apply(bucketsCount));
+        for (int i = 0; i < bucketsCount; i++) {
             for (int j = 0; j < 32; j++) {
                 table.add(random.nextInt(RANGE));
             }

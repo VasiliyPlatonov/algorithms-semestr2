@@ -2,6 +2,7 @@ package ru.reeson2003.task3.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import ru.reeson2003.task3.Domain;
 import ru.reeson2003.task3.table.HashTable;
@@ -12,13 +13,13 @@ public class MainController {
     @Autowired
     private Domain domain;
 
-    @GetMapping("/")
-    public String process() {
-        HashTable<Integer> a = domain.generate();
-        HashTable<Integer> b = domain.generate();
-        HashTable<Integer> c = domain.generate();
-        HashTable<Integer> d = domain.generate();
-        HashTable<Integer> e = domain.generate();
+    @GetMapping("/{buckets}")
+    public String process(@PathVariable("buckets") int buckets) {
+        HashTable<Integer> a = domain.generate(buckets);
+        HashTable<Integer> b = domain.generate(buckets);
+        HashTable<Integer> c = domain.generate(buckets);
+        HashTable<Integer> d = domain.generate(buckets);
+        HashTable<Integer> e = domain.generate(buckets);
         StringBuilder sb = new StringBuilder();
         sb.append("================SET [A]=================\n")
                 .append(a.print())

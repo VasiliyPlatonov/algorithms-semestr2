@@ -18,7 +18,7 @@ public class Domain {
     }
 
     public static void main(String[] args) {
-        new Domain(100, 1000, LinkedList::new).process(System.out);
+        new Domain(32, 1000, LinkedList::new).process(System.out);
     }
 
     public void process(OutputStream out) {

@@ -1,41 +1,54 @@
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Random;
+import java.util.function.UnaryOperator;
 
 public class Domain {
 
-    public static final int NUMBER = 100;
-    public static final int BOUND = 10000;
+    private final int number;
+    private final int bound;
+    private final UnaryOperator<Collection<Integer>> collectionFactory;
 
-    public static void main(String[] args) {
-        new Domain().process();
+    public Domain(int number, int bound, UnaryOperator<Collection<Integer>> collectionFactory) {
+        this.number = number;
+        this.bound = bound;
+        this.collectionFactory = collectionFactory;
     }
 
-    public void process() {
+    public static void main(String[] args) {
+        new Domain(32, 1000, LinkedList::new).process(System.out);
+    }
+
+    public void process(OutputStream out) {
         MyContainer<Integer> a = generate();
         MyContainer<Integer> b = generate();
         MyContainer<Integer> c = generate();
         MyContainer<Integer> d = generate();
         MyContainer<Integer> e = generate();
-        System.out.println("a = " + a);
-        System.out.println("b = " + b);
-        System.out.println("c = " + c);
-        System.out.println("d = " + d);
-        System.out.println("e = " + e);
+        PrintStream os = new PrintStream(out);
+        os.println("a = " + a);
+        os.println("b = " + b);
+        os.println("c = " + c);
+        os.println("d = " + d);
+        os.println("e = " + e);
         c.intersect(d);
-        System.out.println("intersect = " + c);
+        os.println("intersect = " + c);
         c.differ(e);
-        System.out.println("differ = " + c);
+        os.println("differ = " + c);
         a.unite(b);
-        System.out.println("union = " + a);
+        os.println("union = " + a);
         a.symDiffer(c);
-        System.out.println("symDiffer = " + a);
+        os.println("symDiffer = " + a);
     }
 
     MyContainer<Integer> generate() {
         Random random = new Random();
-        MyContainer<Integer> data = new MyContainer<>();
-        for (int i = 0; i < NUMBER; i++) {
+        MyContainer<Integer> data = new MyContainer<>(collectionFactory);
+        for (int i = 0; i < number; i++) {
             for (int j = 0; j < 32; j++) {
-                data.add(random.nextInt(BOUND));
+                data.add(random.nextInt(bound));
             }
         }
         return data;

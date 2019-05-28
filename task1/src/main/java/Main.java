@@ -10,6 +10,7 @@ public class Main {
         Line brim = new Line(new Point(0, 15), 20);
         MyShape face = new MyShape(new Point(30, 10), new Point(47, 18));
         RhombWithObliqueCross tie = new RhombWithObliqueCross(new Point(90, 15), new Point(80, 20));
+        RhombWithObliqueCross star = new RhombWithObliqueCross(new Point(90, 15), new Point(80, 20));
         RhombWithObliqueCross lEar = new RhombWithObliqueCross(new Point(90, 25), new Point(80, 32));
         RhombWithObliqueCross rEar = new RhombWithObliqueCross(new Point(20, 35), new Point(30, 42));
         Shape.refresh();
@@ -30,6 +31,8 @@ public class Main {
         lEar.putToWest(face);
         rEar.putToEast(face);
         tie.down(face);
+        star.up(brim);
+        star.move(0, 2);
         Shape.refresh();
     }
 }

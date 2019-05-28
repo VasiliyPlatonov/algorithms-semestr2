@@ -4,10 +4,16 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.function.UnaryOperator;
+
 import static org.junit.Assert.assertEquals;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MyContainerTest {
+
+    private static final UnaryOperator<Collection<Integer>> collectionFactory = LinkedList::new;
 
     @Before
     @After
@@ -19,7 +25,7 @@ public class MyContainerTest {
     public void _1add() {
         System.out.println("Add test:");
         separate();
-        MyContainer<Integer> tree = new MyContainer<>();
+        MyContainer<Integer> tree = new MyContainer<>(collectionFactory);
         tree.add(1);
         tree.add(2);
         tree.add(3);
@@ -31,7 +37,7 @@ public class MyContainerTest {
     public void _2erase() {
         System.out.println("Erase test:");
         separate();
-        MyContainer<Integer> tree = new MyContainer<>();
+        MyContainer<Integer> tree = new MyContainer<>(collectionFactory);
         tree.add(1);
         tree.add(2);
         tree.add(3);
@@ -52,7 +58,7 @@ public class MyContainerTest {
     public void _3exclude() {
         System.out.println("Exclude test");
         separate();
-        MyContainer<Integer> tree = new MyContainer<>();
+        MyContainer<Integer> tree = new MyContainer<>(collectionFactory);
         tree.add(1);
         tree.add(2);
         tree.add(3);
@@ -60,7 +66,7 @@ public class MyContainerTest {
         tree.add(5);
         System.out.println("Before:");
         printSorted(tree);
-        MyContainer<Integer> subtree = new MyContainer<>();
+        MyContainer<Integer> subtree = new MyContainer<>(collectionFactory);
         subtree.add(2);
         subtree.add(3);
         subtree.add(4);
@@ -78,7 +84,7 @@ public class MyContainerTest {
     public void _4multiple() {
         System.out.println("Multiple test:");
         separate();
-        MyContainer<Integer> tree = new MyContainer<>();
+        MyContainer<Integer> tree = new MyContainer<>(collectionFactory);
         tree.add(1);
         tree.add(2);
         tree.add(3);

@@ -1,7 +1,9 @@
 import com.google.common.collect.Iterables;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -10,7 +12,13 @@ import static org.apache.commons.collections4.CollectionUtils.*;
 
 public class MyContainer<T extends Comparable<T>> implements Container<T> {
 
-    protected LinkedList<T> origin = new LinkedList<>();
+    private final UnaryOperator<Collection<T>> collectionFactory;
+    protected Collection<T> origin;
+
+    public MyContainer(UnaryOperator<Collection<T>> collectionFactory) {
+        this.collectionFactory = collectionFactory;
+        origin = collectionFactory.apply(Collections.emptySet());
+    }
 
     @Override
     public Collection<T> toCollection() {
@@ -24,22 +32,22 @@ public class MyContainer<T extends Comparable<T>> implements Container<T> {
 
     @Override
     public void unite(Container<T> another) {
-        this.origin = new LinkedList<>(union(origin, another.toCollection()));
+        this.origin = collectionFactory.apply(union(origin, another.toCollection()));
     }
 
     @Override
     public void intersect(Container<T> another) {
-        this.origin = new LinkedList<>(intersection(origin, another.toCollection()));
+        this.origin = collectionFactory.apply(intersection(origin, another.toCollection()));
     }
 
     @Override
     public void differ(Container<T> another) {
-        this.origin = new LinkedList<>(subtract(origin, another.toCollection()));
+        this.origin = collectionFactory.apply(subtract(origin, another.toCollection()));
     }
 
     @Override
     public void symDiffer(Container<T> another) {
-        this.origin = new LinkedList<>(disjunction(origin, another.toCollection()));
+        this.origin = collectionFactory.apply(disjunction(origin, another.toCollection()));
     }
 
     @Override
@@ -53,7 +61,7 @@ public class MyContainer<T extends Comparable<T>> implements Container<T> {
     @Override
     public void exclude(Container<T> another) {
         if (origin.containsAll(another.toCollection()))
-            this.origin = new LinkedList<>(removeAll(origin, another.toCollection()));
+            this.origin = collectionFactory.apply(removeAll(origin, another.toCollection()));
     }
 
     @Override
